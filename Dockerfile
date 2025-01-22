@@ -11,27 +11,26 @@ RUN mkdir -p /shared && \
     chmod 755 /var/log/samba
 
 # Create smb.conf
-RUN cat > /etc/samba/smb.conf << 'EOF'
-[global]
-    workgroup = WORKGROUP
-    server string = Samba Server
-    server role = standalone server
-    log file = /var/log/samba/log.%m
-    max log size = 50
-    dns proxy = no
-    map to guest = Bad User
-    security = user
-    disable netbios = yes
-
-[shared]
-    path = /shared
-    browseable = yes
-    read only = no
-    guest ok = no
-    create mask = 0777
-    directory mask = 0777
-    valid users = ${SAMBA_USER}
-EOF
+RUN printf '%s\n' \
+    '[global]' \
+    'workgroup = WORKGROUP' \
+    'server string = Samba Server' \
+    'server role = standalone server' \
+    'log file = /var/log/samba/log.%m' \
+    'max log size = 50' \
+    'dns proxy = no' \
+    'map to guest = Bad User' \
+    'security = user' \
+    'disable netbios = yes' \
+    '[shared]' \
+    'path = /shared' \
+    'browseable = yes' \
+    'read only = no' \
+    'guest ok = no' \
+    'create mask = 0777' \
+    'directory mask = 0777' \
+    'valid users = ${SAMBA_USER}' \
+    > /etc/samba/smb.conf
 
 # Expose SMB port
 EXPOSE 445/tcp
