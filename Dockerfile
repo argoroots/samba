@@ -44,6 +44,4 @@ CMD adduser -S -H "${SAMBA_USER}" && \
     echo "${SAMBA_USER}:${SAMBA_PASSWORD}" | chpasswd && \
     (echo "${SAMBA_PASSWORD}"; echo "${SAMBA_PASSWORD}") | smbpasswd -a "${SAMBA_USER}" && \
     sed -i "s/\${SAMBA_USER}/${SAMBA_USER}/g" /etc/samba/smb.conf && \
-    chown -R "${SAMBA_USER}":"${SAMBA_USER}" /shared && \
-    chmod -R 770 /shared && \
     smbd --foreground --no-process-group
