@@ -27,8 +27,10 @@ RUN printf '%s\n' \
     'browseable = yes' \
     'read only = no' \
     'guest ok = no' \
-    'create mask = 0777' \
-    'directory mask = 0777' \
+    'create mask = 0770' \
+    'directory mask = 0770' \
+    'force user = ${SAMBA_USER}' \
+    'force group = ${SAMBA_USER}' \
     'valid users = ${SAMBA_USER}' \
     > /etc/samba/smb.conf
 
@@ -37,7 +39,11 @@ EXPOSE 445/tcp
 
 # Create user and start Samba
 CMD adduser -S -H "${SAMBA_USER}" && \
+    addgroup "${SAMBA_USER}" && \
+    adduser "${SAMBA_USER}" "${SAMBA_USER}" && \
     echo "${SAMBA_USER}:${SAMBA_PASSWORD}" | chpasswd && \
     (echo "${SAMBA_PASSWORD}"; echo "${SAMBA_PASSWORD}") | smbpasswd -a "${SAMBA_USER}" && \
     sed -i "s/\${SAMBA_USER}/${SAMBA_USER}/g" /etc/samba/smb.conf && \
+    chown -R "${SAMBA_USER}":"${SAMBA_USER}" /shared && \
+    chmod -R 770 /shared && \
     smbd --foreground --no-process-group
