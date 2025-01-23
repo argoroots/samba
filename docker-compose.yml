@@ -1,0 +1,13 @@
+version: '3'
+services:
+  samba:
+    image: ghcr.io/argoroots/samba:latest
+    container_name: samba
+    environment:
+      - SAMBA_USER=sambauser
+      - SAMBA_PASSWORD=sambapass
+    ports:
+      - "445:445/tcp"
+    volumes:
+      - ./shared:/shared
+    restart: unless-stopped
