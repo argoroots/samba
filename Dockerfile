@@ -38,8 +38,8 @@ RUN printf '%s\n' \
 EXPOSE 445/tcp
 
 # Create user and start Samba
-CMD adduser -S -H "${SAMBA_USER}" && \
-    echo "${SAMBA_USER}:${SAMBA_PASSWORD}" | chpasswd && \
-    (echo "${SAMBA_PASSWORD}"; echo "${SAMBA_PASSWORD}") | smbpasswd -a "${SAMBA_USER}" && \
-    sed -i "s/\${SAMBA_USER}/${SAMBA_USER}/g" /etc/samba/smb.conf && \
+CMD id "${SAMBA_USER}" &>/dev/null || adduser -S -H "${SAMBA_USER}"; \
+    echo "${SAMBA_USER}:${SAMBA_PASSWORD}" | chpasswd; \
+    (echo "${SAMBA_PASSWORD}"; echo "${SAMBA_PASSWORD}") | smbpasswd -a "${SAMBA_USER}"; \
+    sed -i "s/\${SAMBA_USER}/${SAMBA_USER}/g" /etc/samba/smb.conf; \
     smbd --foreground --no-process-group
